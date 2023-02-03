@@ -2,7 +2,7 @@
 
 ## Database Schema Design
 
-![image](https://user-images.githubusercontent.com/109090029/216481147-7cad9bef-2036-4c1e-9458-56764fa74a70.png)
+![image](https://user-images.githubusercontent.com/109090029/216487327-5f1b32d4-1c53-4be3-b754-b49f192a7f54.png)
 
 [airbnb-dbdiagram]: ../assets/airbnb_dbdiagram.png
 
