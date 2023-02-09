@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "![image](https://user-images.githubusercontent.com/109090029/216487327-5f1b32d4-1c53-4be3-b754-b49f192a7f54.png)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csurf": "^1.11.0",
@@ -34,5 +35,13 @@
     "dotenv-cli": "^7.0.0",
     "nodemon": "^2.0.20",
     "sqlite3": "^5.1.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxParks/AirBnB.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MaxParks/AirBnB/issues"
+  },
+  "homepage": "https://github.com/MaxParks/AirBnB#readme"
 }
