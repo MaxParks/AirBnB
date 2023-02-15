@@ -20,6 +20,28 @@ module.exports = {
         description: "Place where web developers are created",
         price: 123,
       },
+      {
+        address: "456 Universal Way",
+        city: "San Diego",
+        state: "California",
+        country: "United States of America",
+        lat: 40.7645358,
+        lng: -100.4730327,
+        name: "Universal Studios",
+        description: "Place where joy is made",
+        price: 99,
+      },
+      {
+        address: "880 Hampshire Road",
+        city: "LA",
+        state: "California",
+        country: "United States of America",
+        lat: 20.7645358,
+        lng: -10.4730327,
+        name: "Elite MMA",
+        description: "Where pain is found",
+        price: 250,
+      },
     ], {});
   },
 
