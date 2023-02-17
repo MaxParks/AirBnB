@@ -7,28 +7,26 @@ if (process.env.NODE_ENV === 'production') {
 }
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    options.tableName = 'Reviews';
+    options.tableName = 'Bookings';
     return queryInterface.bulkInsert(options, [
       {
         spotId: 1,
         userId: 1,
-        review: "This was an awesome spot!",
-        stars: 5
+        startDate: "2023-02-01",
+        endDate: "2023-02-16"
       },
       {
         spotId: 2,
         userId: 2,
-        review: "This place was bad",
-        stars: 2
+        startDate: "2023-03-01",
+        endDate: "2023-03-16"
       },
       {
         spotId: 3,
         userId: 3,
-        review: "Nice vacation place!",
-        stars: 4
-      }
-    ], {});
-  },
+        startDate: "2023-04-01",
+        endDate: "2023-04-16"
+      },
     /**
      * Add seed commands here.
      *
@@ -38,12 +36,14 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+  ], {});
+  },
 
   down: async (queryInterface, Sequelize) => {
-    options.tableName = 'Reviews';
+    options.tableName = 'Bookings';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      review: { [Op.in]: ['This was an awesome spot!','This place was bad','Nice vacation place!'] }
+      spotId: { [Op.in]: [1] }
     }, {});
   }
 };

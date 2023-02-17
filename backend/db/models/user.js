@@ -5,8 +5,8 @@ const { Model, Validator } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     toSafeObject() {
-      const { id, firstName, lastName, email } = this; // context will be the User instance
-      return { id, firstName, lastName, email };
+      const { id, username, firstName, lastName, email } = this; // context will be the User instance
+      return { id, username, firstName, lastName, email };
     }
 
     validatePassword(password) {
@@ -46,11 +46,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static associate(models) {
-      // define association here
-      User.hasMany(
-        models.Spot,
-        { foreignKey: 'ownerId', onDelete: 'CASCADE',  hooks: true }
-      )
+      User.hasMany(models.Spot, { foreignKey: 'ownerId', onDelete: 'CASCADE' })
+
+      User.hasMany(models.Booking, { foreignKey: 'userId', onDelete: 'CASCADE' })
+
+      User.hasMany(models.Review, { foreignKey: 'userId', onDelete: 'CASCADE' })
     }
   };
 
@@ -102,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       scopes: {
         currentUser: {
-          attributes: { exclude: ["hashedPassword", "createdAt", "updatedAt"] }
+          attributes: { exclude: ["hashedPassword"] }
         },
         loginUser: {
           attributes: {}

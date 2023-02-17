@@ -7,28 +7,23 @@ if (process.env.NODE_ENV === 'production') {
 }
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    options.tableName = 'Reviews';
+    options.tableName = 'Spotimages';
     return queryInterface.bulkInsert(options, [
       {
         spotId: 1,
-        userId: 1,
-        review: "This was an awesome spot!",
-        stars: 5
+        url: 'www.google.com/1',
+        preview: true,
       },
       {
         spotId: 2,
-        userId: 2,
-        review: "This place was bad",
-        stars: 2
+        url: 'www.google.com/2',
+        preview: true,
       },
       {
         spotId: 3,
-        userId: 3,
-        review: "Nice vacation place!",
-        stars: 4
-      }
-    ], {});
-  },
+        url: 'www.google.com/3',
+        preview: true,
+      },
     /**
      * Add seed commands here.
      *
@@ -38,12 +33,14 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    ])
+  },
 
   down: async (queryInterface, Sequelize) => {
-    options.tableName = 'Reviews';
+    options.tableName = 'Spotimages';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      review: { [Op.in]: ['This was an awesome spot!','This place was bad','Nice vacation place!'] }
+      url: { [Op.in]: ['www.google.com/1','www.google.com/2','www.google.com/3'] }
     }, {});
   }
 };
