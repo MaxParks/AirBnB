@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
 
-    Review.hasMany(models.ReviewImage, {foreignKey: 'reviewId',
+    Review.hasMany(models.Reviewimage, {foreignKey: 'reviewId',
         onDelete: 'CASCADE'
       })
 
