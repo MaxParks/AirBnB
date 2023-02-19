@@ -1,46 +1,10 @@
 const express = require('express')
 const {Op} = require("sequelize")
-const { check, query, body } = require('express-validator');
 const {restoreUser, requireAuth} = require('../../utils/auth');
 const { sequelize, User, Spot, Spotimage, Review} = require('../../db/models');
 const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 
-const validateFilters = [
-  query('page')
-      .customSanitizer(val => val || 1)
-      .isInt({ min: 1, max: 10 })
-      .withMessage("Page must be greater than or equal to 1"),
-  query('size')
-      .customSanitizer(val => val || 20)
-      .isInt({ min: 1, max: 20 })
-      .withMessage("Size must be greater than or equal to 1"),
-  query('maxLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Maximum latitude is invalid")
-      .optional(),
-  query('minLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Minimum latitude is invalid")
-      .optional(),
-  query('minLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Maximum longitude is invalid")
-      .optional(),
-  query('maxLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Minimum longitude is invalid")
-      .optional(),
-  query('minPrice')
-      .isInt({ min: 0 })
-      .withMessage("Maximum price must be greater than or equal to 0")
-      .optional(),
-  query('maxPrice')
-      .isInt({ min: 0 })
-      .withMessage("Maximum price must be greater than or equal to 0")
-      .optional(),
-  handleValidationErrors
-];
 
 // Create a Spot
 router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, res, next) => {
@@ -80,7 +44,7 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 
 // GET all spots
-router.get('/',validateFilters, async (req, res) => {
+router.get('/',handleValidationErrors, async (req, res) => {
   try {
 
     const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
