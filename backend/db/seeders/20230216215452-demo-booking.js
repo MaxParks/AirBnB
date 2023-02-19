@@ -11,7 +11,7 @@ module.exports = {
       {
         spotId: 1,
         userId: 2,
-        startDate: '2023-10-01',
+        startDate: '2023-11-05',
         endDate: '2023-11-16'
       },
       {
@@ -40,10 +40,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    options.tableName = 'Bookings';
-    const Op = Sequelize.Op;
-    return queryInterface.bulkDelete(options, {
-      spotId: { [Op.in]: [1, 2, 3] }
-    }, {});
+    options.tableName = 'Bookings'
+    await queryInterface.dropTable(options,null,{})
   }
 };
