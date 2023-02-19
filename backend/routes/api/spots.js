@@ -20,7 +20,7 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
   } catch(err) {
 
-      // console.log(err)
+      console.log(err)
 
       res.status(400).json({
           message: "Validation Error",
@@ -143,7 +143,7 @@ router.get('/',handleValidationErrors, async (req, res) => {
 
   } catch(err) {
 
-    // console.log(err)
+    console.log(err)
 
     res.status(400).json({
         message: "Validation Error",
