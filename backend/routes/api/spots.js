@@ -203,7 +203,7 @@ router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
           }
       ],
 
-      group:['Reviews.spotId', 'SpotImages.url', 'Spot.id'],
+      group:['Reviews.spotId', 'Spotimages.url', 'Spot.id'],
 
 
       where: {
