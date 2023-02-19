@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     options.tableName = 'Bookings';
-    return queryInterface.bulkInsert([
+    return queryInterface.bulkInsert(options, [
       {
         spotId: 1,
         userId: 1,
@@ -26,17 +26,7 @@ module.exports = {
         startDate: '2023-10-01',
         endDate: '2023-12-16'
       },
-      
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
-  ],options, {});
+  ], {});
   },
 
   down: async (queryInterface, Sequelize) => {
