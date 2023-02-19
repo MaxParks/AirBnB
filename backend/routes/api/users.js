@@ -33,6 +33,19 @@ router.post(
   async (req, res) => {
     const { email, password,firstName,lastName, username} = req.body;
 
+    if(!firstName || !lastName || !email || !password || !username){
+      return res.status(400).json({
+        message: "Validation error",
+        statusCode: 400,
+        errors: {
+          email: "Invalid email",
+          username: "Username is required",
+          firstName: "First Name is required",
+          lastName: "Last Name is required"
+        }
+      })
+    }
+
     try {
       const existingEmail = await User.findOne({
         where: { email: email }
@@ -63,10 +76,11 @@ router.post(
 
     const user = await User.signup({ email, username,firstName,lastName, password});
 
-    await setTokenCookie(res, user);
+    const token = await setTokenCookie(res, user);
 
     return res.json({
       user,
+      token
     });
   } catch (error) {
     return res.status(500).json({
