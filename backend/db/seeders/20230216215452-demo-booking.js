@@ -10,19 +10,19 @@ module.exports = {
     return queryInterface.bulkInsert(options, [
       {
         spotId: 1,
-        userId: 2,
+        userId: 1,
         startDate: '2023-11-05',
         endDate: '2023-11-16'
       },
       {
         spotId: 2,
-        userId: 3,
+        userId: 2,
         startDate: '2023-11-01',
         endDate: '2023-12-16'
       },
       {
         spotId: 3,
-        userId: 1,
+        userId: 3,
         startDate: '2023-10-01',
         endDate: '2023-12-16'
       },
@@ -40,7 +40,9 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    options.tableName = 'Bookings'
-    await queryInterface.dropTable(options,null,{})
+    options.tableName = 'Bookings';
+    return queryInterface.bulkDelete(options, {
+      spotId:  [1, 2, 3]
+    }, {});
   }
 };
