@@ -3,44 +3,7 @@ const {Op} = require("sequelize")
 const {restoreUser, requireAuth} = require('../../utils/auth');
 const { sequelize, User, Spot, Spotimage, Review} = require('../../db/models');
 const { handleValidationErrors } = require('../../utils/validation');
-const { check, query, body } = require('express-validator');
 const router = express.Router();
-
-const validateSpots= [
-  query('page')
-      .customSanitizer(val => val || 1)
-      .isInt({ min: 1, max: 10 })
-      .withMessage("Page must be greater than or equal to 1"),
-  query('size')
-      .customSanitizer(val => val || 20)
-      .isInt({ min: 1, max: 20 })
-      .withMessage("Size must be greater than or equal to 1"),
-  query('maxLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Maximum latitude is invalid")
-      .optional(),
-  query('minLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Minimum latitude is invalid")
-      .optional(),
-  query('minLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Maximum longitude is invalid")
-      .optional(),
-  query('maxLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Minimum longitude is invalid")
-      .optional(),
-  query('minPrice')
-      .isInt({ min: 0 })
-      .withMessage("Maximum price must be greater than or equal to 0")
-      .optional(),
-  query('maxPrice')
-      .isInt({ min: 0 })
-      .withMessage("Maximum price must be greater than or equal to 0")
-      .optional(),
-  handleValidationErrors
-];
 
 
 // Create a Spot
@@ -81,8 +44,9 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 
 // GET all spots
-router.get('/',validateSpots, async (req, res) => {
-  
+router.get('/',handleValidationErrors, async (req, res) => {
+  try {
+
     const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
 
     const where = {}
@@ -176,6 +140,27 @@ router.get('/',validateSpots, async (req, res) => {
       page,
       size
     });
+
+  } catch(err) {
+
+    console.log(err)
+
+    res.status(400).json({
+        message: "Validation Error",
+        statusCode: 400,
+        errors: {
+          page: "Page must be greater than or equal to 1",
+           size: "Size must be greater than or equal to 1",
+          maxLat: "Maximum latitude is invalid",
+          minLat: "Minimum latitude is invalid",
+          minLng: "Maximum longitude is invalid",
+          maxLng: "Minimum longitude is invalid",
+          minPrice: "Maximum price must be greater than or equal to 0",
+          maxPrice: "Minimum price must be greater than or equal to 0"
+          }
+    })
+
+}
 });
 
 // Get all Spots owned by the Current User
