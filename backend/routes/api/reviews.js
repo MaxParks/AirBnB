@@ -1,6 +1,6 @@
 const express = require('express')
 const {Op} = require("sequelize")
-const {setTokenCookie, restoreUser, requireAuth} = require('../../utils/auth');
+const {restoreUser, requireAuth} = require('../../utils/auth');
 const {User, Spot, Spotimage, Review, Reviewimage,sequelize} = require('../../db/models');
 const { handleValidationErrors } = require('../../utils/validation');
 const { check,body,query } = require('express-validator');

@@ -58,53 +58,53 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 // GET all spots
 router.get('/',handleValidationErrors, async (req, res, next) => {
-  try {
-    const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
-    const where = {}
-    let {page, size} = req.query;
+  // try {
+  //   const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
+  //   const where = {}
+  //   let {page, size} = req.query;
 
-    if (!page) page = 1;
-    if (!size) size = 20;
+  //   if (!page) page = 1;
+  //   if (!size) size = 20;
 
-    let pagination = {}
-    if (parseInt(page) >= 1 && parseInt(size) >= 1) {
-        pagination.limit = size;
-        pagination.offset = size * (page - 1)
-    }
+  //   let pagination = {}
+  //   if (parseInt(page) >= 1 && parseInt(size) >= 1) {
+  //       pagination.limit = size;
+  //       pagination.offset = size * (page - 1)
+  //   }
     
-    // Validations
-    const errors = {};
-    if (page < 1 || page > 10) {
-      errors.page = 'Page must be an integer between 1 and 10';
-    }
-    if (size < 1 || size > 20) {
-      errors.size = 'Size must be an integer between 1 and 20';
-    }
-    if (minLat < -90 || minLat > 90) {
-      errors.minLat = 'Minimum latitude must be between -90 and 90';
-    }
-    if (maxLat < -90 || maxLat > 90) {
-      errors.maxLat = 'Maximum latitude must be between -90 and 90';
-    }
-    if (minLng < -180 || minLng > 180) {
-      errors.minLng = 'Minimum longitude must be between -180 and 180';
-    }
-    if (maxLng < -180 || maxLng > 180) {
-      errors.maxLng = 'Maximum longitude must be between -180 and 180';
-    }
-    if (minPrice < 0) {
-      errors.minPrice = 'Minimum price must be a decimal greater than or equal to 0';
-    }
-    if (maxPrice < 0) {
-      errors.maxPrice = 'Maximum price must be a decimal greater than or equal to 0';
-    }
-    if (Object.keys(errors).length > 0) {
-      return res.status(400).json({
-        message: 'Validation Error',
-        statusCode: 400,
-        errors: errors
-      });
-    }
+  //   // Validations
+  //   const errors = {};
+  //   if (page < 1 || page > 10) {
+  //     errors.page = 'Page must be an integer between 1 and 10';
+  //   }
+  //   if (size < 1 || size > 20) {
+  //     errors.size = 'Size must be an integer between 1 and 20';
+  //   }
+  //   if (minLat < -90 || minLat > 90) {
+  //     errors.minLat = 'Minimum latitude must be between -90 and 90';
+  //   }
+  //   if (maxLat < -90 || maxLat > 90) {
+  //     errors.maxLat = 'Maximum latitude must be between -90 and 90';
+  //   }
+  //   if (minLng < -180 || minLng > 180) {
+  //     errors.minLng = 'Minimum longitude must be between -180 and 180';
+  //   }
+  //   if (maxLng < -180 || maxLng > 180) {
+  //     errors.maxLng = 'Maximum longitude must be between -180 and 180';
+  //   }
+  //   if (minPrice < 0) {
+  //     errors.minPrice = 'Minimum price must be a decimal greater than or equal to 0';
+  //   }
+  //   if (maxPrice < 0) {
+  //     errors.maxPrice = 'Maximum price must be a decimal greater than or equal to 0';
+  //   }
+  //   if (Object.keys(errors).length > 0) {
+  //     return res.status(400).json({
+  //       message: 'Validation Error',
+  //       statusCode: 400,
+  //       errors: errors
+  //     });
+  //   }
 
     const allSpots = await Spot.findAll({
 
@@ -143,21 +143,21 @@ router.get('/',handleValidationErrors, async (req, res, next) => {
       ],
 
       group:['Reviews.spotId', 'Spotimages.url', 'Spot.id'],
-      where,
-      ...pagination,
-      subQuery: false
+      // where,
+      // ...pagination,
+      // subQuery: false
 
 
   });
 
   return res.status(200).json({
       Spots: allSpots,
-      page,
-      size
+      // page,
+      // size
   })
-  } catch (err) {
-    next(err);
-  }
+  // } catch (err) {
+  //   next(err);
+  // }
 });
 
 // Get all Spots owned by the Current User
