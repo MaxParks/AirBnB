@@ -1,9 +1,22 @@
 const express = require('express')
 const {Op} = require("sequelize")
 const {restoreUser, requireAuth} = require('../../utils/auth');
-const { sequelize, User, Spot, Spotimage, Review} = require('../../db/models');
+const { sequelize, User, Spot, Spotimage, Review, Reviewimage} = require('../../db/models');
 const { handleValidationErrors } = require('../../utils/validation');
+const { check, query, body } = require('express-validator');
 const router = express.Router();
+
+const validateReview = [
+  body('review')
+      .exists()
+      .withMessage("Review text is required"),
+  body('stars')
+      .exists()
+      .withMessage("Rating text is required")
+      .isInt({ min: 1, max: 5 })
+      .withMessage("Stars must be an integer from 1 to 5"),
+  handleValidationErrors
+]
 
 
 // Create a Spot
@@ -44,48 +57,10 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 
 // GET all spots
-router.get('/',handleValidationErrors, async (req, res) => {
+router.get('/',handleValidationErrors, async (req, res, next) => {
   try {
-
     const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
-
     const where = {}
-
-    if(maxLat && !minLat){
-        where.lat = {[Op.lte]: maxLat };
-    }
-
-    if(minLat && !maxLat){
-        where.lat = {[Op.gte]: minLat }
-    }
-    if(minLat && maxLat){
-        where.lat = {[Op.between]: [minLat, maxLat] }
-    }
-    if(minLng && !maxLng){
-        where.lng = {[Op.gte]: minLng };
-    }
-
-    if(maxLng && !minLng){
-        where.lng = {[Op.lte]: maxLng };
-    }
-
-    if(maxLng && minLng){
-        where.lng = {[Op.between]: [minLng, maxLng] }
-    }
-
-    if(minPrice && !maxPrice){
-        where.price = {[Op.gte]: minPrice }
-    }
-
-    if(maxPrice && !minPrice){
-        where.price = {[Op.lte]: maxPrice };
-    }
-
-    if(minPrice && maxPrice){
-        where.price = {[Op.between]: [minPrice, maxPrice] }
-    }
-
-
     let {page, size} = req.query;
 
     if (!page) page = 1;
@@ -97,76 +72,98 @@ router.get('/',handleValidationErrors, async (req, res) => {
         pagination.offset = size * (page - 1)
     }
     
-    const allSpots = await Spot.findAll({
-      attributes: [
-        'id',
-        'ownerId',
-        'address',
-        'city',
-        'state',
-        'country',
-        'lat',
-        'lng',
-        'name',
-        'description',
-        'price',
-        'createdAt',
-        'updatedAt',
+    // Validations
+    const errors = {};
+    if (page < 1 || page > 10) {
+      errors.page = 'Page must be an integer between 1 and 10';
+    }
+    if (size < 1 || size > 20) {
+      errors.size = 'Size must be an integer between 1 and 20';
+    }
+    if (minLat < -90 || minLat > 90) {
+      errors.minLat = 'Minimum latitude must be between -90 and 90';
+    }
+    if (maxLat < -90 || maxLat > 90) {
+      errors.maxLat = 'Maximum latitude must be between -90 and 90';
+    }
+    if (minLng < -180 || minLng > 180) {
+      errors.minLng = 'Minimum longitude must be between -180 and 180';
+    }
+    if (maxLng < -180 || maxLng > 180) {
+      errors.maxLng = 'Maximum longitude must be between -180 and 180';
+    }
+    if (minPrice < 0) {
+      errors.minPrice = 'Minimum price must be a decimal greater than or equal to 0';
+    }
+    if (maxPrice < 0) {
+      errors.maxPrice = 'Maximum price must be a decimal greater than or equal to 0';
+    }
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({
+        message: 'Validation Error',
+        statusCode: 400,
+        errors: errors
+      });
+    }
 
-        //functions to create avgRating and previewImage
-        [sequelize.fn('avg', sequelize.col('reviews.stars')), 'avgRating'],
-        [sequelize.fn('', sequelize.col('spotImages.url')), 'previewImage'],
+    const allSpots = await Spot.findAll({
+
+      attributes: [
+
+          "id",
+          "ownerId",
+          "address",
+          "city",
+          "state",
+          "country",
+          "lat",
+          "lng",
+          "name",
+          "description",
+          "price",
+          "createdAt",
+          "updatedAt",
+          [sequelize.fn('avg', sequelize.col('stars')), 'avgRating'],
+          [sequelize.fn('', sequelize.col('url')), 'previewImage']
       ],
+
       include: [
-        {
-          model: Spotimage,
-          attributes: [],
-          where: { preview: true },
-        },
-        {
-          model: Review,
-          attributes: [],
-        },
+          {
+              model: Spotimage,
+              attributes: [
+              ],
+              where: {
+                  preview: true
+              }
+          },
+          {
+              model: Review,
+              attributes: [],
+          }
       ],
-      group: ['Spot.id', 'spotimages.url', 'reviews.spotId'],
+
+      group:['Reviews.spotId', 'Spotimages.url', 'Spot.id'],
       where,
       ...pagination,
       subQuery: false
-    
-    });
 
-    return res.status(200).json({
+
+  });
+
+  return res.status(200).json({
       Spots: allSpots,
       page,
       size
-    });
-
-  } catch(err) {
-
-    console.log(err)
-
-    res.status(400).json({
-        message: "Validation Error",
-        statusCode: 400,
-        errors: {
-          page: "Page must be greater than or equal to 1",
-           size: "Size must be greater than or equal to 1",
-          maxLat: "Maximum latitude is invalid",
-          minLat: "Minimum latitude is invalid",
-          minLng: "Maximum longitude is invalid",
-          maxLng: "Minimum longitude is invalid",
-          minPrice: "Maximum price must be greater than or equal to 0",
-          maxPrice: "Minimum price must be greater than or equal to 0"
-          }
-    })
-
-}
+  })
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Get all Spots owned by the Current User
 router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
 
-  const { user } = req;
+  const { user } = req
 
   const allSpots = await Spot.findAll({
 
@@ -380,5 +377,66 @@ router.delete('/:spotId',restoreUser, requireAuth, async (req, res) => {
     return res.status(500).json({ message: "Internal server error", statusCode: 500 })
   }
 });
+
+// Get all Reviews by a Spot's id
+router.get('/:spotId/reviews', async (req, res) => {
+  try {
+    const spotId = req.params.spotId
+    const spot = await Spot.findByPk(spotId)
+    if (!spot) {
+      return res.status(404).json({
+        message: "Spot couldn't be found",
+        statusCode: 404
+      })
+    }
+
+    const reviews = await Review.findAll({
+      where: { spotId },
+      include: [
+            {
+                model: User,
+                attributes: [
+                    'id', 'firstName', 'lastName'
+                ]
+            },
+            {
+                model: Reviewimage,
+                attributes: [
+                    'id', 'url'
+                ]
+            },
+        ]
+    });
+    return res.status(200).json({ Reviews: reviews });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Internal server error',
+      statusCode: 500
+    });
+  }
+});
+
+// Create a Review for a Spot based on the Spot's id
+router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (req, res, next) => {
+  const { spotId } = req.params
+  const { review, stars } = req.body
+  const userId = req.user.id
+
+  const spot = await Spot.findByPk(spotId)
+    if (!spot) {
+      return res.status(404).json({ message: 'Spot couldn\'t be found', statusCode: 404 })
+    }
+
+    const existingReview = await Review.findOne({ where: { userId, spotId } })
+    if (existingReview) {
+      return res.status(403).json({ message: 'User already has a review for this spot', statusCode: 403 })
+    }
+
+    const newReview = await Review.create({ review, stars, userId, spotId })
+
+    return res.status(201).json(newReview)
+
+})
 
 module.exports = router;
