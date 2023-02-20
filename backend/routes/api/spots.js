@@ -57,8 +57,8 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 
 // GET all spots
-router.get('/',handleValidationErrors, async (req, res, next) => {
-  try {
+router.get('/',handleValidationErrors, async (req, res) => {
+  
     const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
     const where = {}
     let {page, size} = req.query;
@@ -155,9 +155,7 @@ router.get('/',handleValidationErrors, async (req, res, next) => {
       page,
       size
   })
-  } catch (err) {
-    next(err);
-  }
+  
 });
 
 // Get all Spots owned by the Current User
@@ -264,7 +262,7 @@ router.get('/:spotId', async (req, res, next) => {
           }
       ],
 
-      group:['Reviews.spotId', 'Spot.id', 'Spotimages.id', 'Owner.id'],
+      group:['Reviews.spotId', 'Spot.id', 'Spotimages.id', 'Users.id'],
 
   })
 
