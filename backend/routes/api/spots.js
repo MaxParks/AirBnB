@@ -57,7 +57,7 @@ router.post('/', restoreUser, requireAuth,handleValidationErrors, async (req, re
 
 
 // GET all spots
-router.get('/',handleValidationErrors, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   // try {
   //   const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
   //   const where = {}
@@ -107,42 +107,23 @@ router.get('/',handleValidationErrors, async (req, res, next) => {
   //   }
 
     const allSpots = await Spot.findAll({
-
-      attributes: [
-
-          "id",
-          "ownerId",
-          "address",
-          "city",
-          "state",
-          "country",
-          "lat",
-          "lng",
-          "name",
-          "description",
-          "price",
-          "createdAt",
-          "updatedAt",
-          [sequelize.fn('avg', sequelize.col('stars')), 'avgRating'],
-          [sequelize.fn('', sequelize.col('url')), 'previewImage']
-      ],
-
       include: [
-          {
-              model: Spotimage,
-              attributes: [
-              ],
-              where: {
-                  preview: true
-              }
-          },
-          {
-              model: Review,
-              attributes: [],
-          }
-      ],
-
-      group:['Reviews.spotId', 'Spotimages.url', 'Spot.id'],
+        {
+          model: User,
+          as: "Owner",
+          attributes: ["id", "firstName", "lastName"]
+        },
+        {
+          model: Spotimage,
+          attributes: ["url"],
+          limit: 1
+        },
+        {
+          model: Review,
+          attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'avgRating']],
+          group: ['spotId']
+        }
+      ]
       // where,
       // ...pagination,
       // subQuery: false
@@ -150,15 +131,13 @@ router.get('/',handleValidationErrors, async (req, res, next) => {
 
   });
 
-  return res.status(200).json({
-      Spots: allSpots,
+  res.status(200).json({ Spots: allSpots });
       // page,
       // size
   })
   // } catch (err) {
   //   next(err);
   // }
-});
 
 // Get all Spots owned by the Current User
 router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
