@@ -300,7 +300,7 @@ router.get('/:spotId', async (req, res, next) => {
           }
       ],
 
-      group:['Reviews.spotId', 'Spot.id', 'Spotimages.id'],
+      group:['Reviews.spotId', 'Spot.id', 'Spotimages.id', 'Owner.id'],
 
   })
 
