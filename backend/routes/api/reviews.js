@@ -1,10 +1,10 @@
 const express = require('express')
 const {Op} = require("sequelize")
-const {restoreUser, requireAuth} = require('../../utils/auth');
-const {User, Spot, Spotimage, Review, Reviewimage,sequelize} = require('../../db/models');
-const { handleValidationErrors } = require('../../utils/validation');
-const { check,body,query } = require('express-validator');
-const router = express.Router();
+const {restoreUser, requireAuth} = require('../../utils/auth')
+const {User, Spot,Review, Reviewimage,sequelize} = require('../../db/models')
+const { handleValidationErrors } = require('../../utils/validation')
+const {body} = require('express-validator')
+const router = express.Router()
 
 const validateReviewImageBody = [
     body('url')
