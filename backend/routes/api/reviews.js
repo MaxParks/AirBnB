@@ -41,7 +41,7 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
           {
             model: Spot,
             attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price',
-            [sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('url')), 0),'previewImage']]
+            [sequelize.fn('COALESCE', sequelize.col('url'), 'default_image_url'),'previewImage']]
           },
           {
             model: Reviewimage,
