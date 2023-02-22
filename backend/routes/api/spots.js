@@ -461,81 +461,89 @@ router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (
 // Create a Booking from a Spot based on the Spot's id
 
 router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
+  const { user } = req
+  const { spotId } = req.params
   const { startDate, endDate } = req.body
-  const spotId = req.params.spotId
-  const userId = req.user.id
 
-    const spot = await Spot.findByPk(spotId)
-
-    if(!startDate || !endDate || (new Date(startDate) > new Date(endDate))){
-      return res.status(400).json({
-          message: "Validation error",
-          statusCode: 400,
-          errors: {
-              endDate: "endDate cannot be on or before startDate"
-          }
-      })
+  if (endDate <= startDate) {
+    return res.status(400).json({
+      message: "Validation error",
+      statusCode: 400,
+      errors: {
+        endDate: "endDate cannot be on or before startDate"
+      }
+    })
   }
 
-    if (!spot) {
-      return res.status(404).json({
-        message: "Spot couldn't be found",
-        statusCode: 404,
-      })
-    }
+  const spot = await Spot.findByPk(spotId)
 
-    if (spot.ownerId === userId) {
-      return res.status(403).json({
-        message: "You can't book your own spot",
-        statusCode: 403,
-      })
-    }
-
-    const existingBooking = await Booking.findOne({
-      where: {
-        spotId,
-        [Op.or]: [
-          { startDate: { [Op.lte]: startDate }, endDate: { [Op.gte]: startDate } },
-          { startDate: { [Op.lte]: endDate }, endDate: { [Op.gte]: endDate } },
-          { startDate: { [Op.gte]: startDate }, endDate: { [Op.lte]: endDate } },
-        ],
-      },
+  if (!spot) {
+    return res.status(404).json({
+      message: "Spot couldn't be found",
+      statusCode: 404
     })
+  }
 
-    if (existingBooking) {
-      return res.status(403).json({
-        message: 'Sorry, this spot is already booked for the specified dates',
-        statusCode: 403,
-        errors: {
-          startDate: 'Start date conflicts with an existing booking',
-          endDate: 'End date conflicts with an existing booking',
-        },
-      })
-    }
 
-    const newBooking = await Booking.create({
+  if (spot.userId === user.id) {
+    return res.status(403).json({
+      message: 'Forbidden',
+      statusCode: 403
+    })
+  }
+
+  const existingBooking = await Booking.findOne({
+    where: {
       spotId,
-      userId,
-      startDate,
-      endDate,
-    })
+      [Op.or]: [
+        {
+          startDate: {
+            [Op.lte]: startDate
+          },
+          endDate: {
+            [Op.gte]: startDate
+          }
+        },
+        {
+          startDate: {
+            [Op.lte]: endDate
+          },
+          endDate: {
+            [Op.gte]: endDate
+          }
+        }
+      ]
+    }
+  })
 
-    res.status(200).json(newBooking);
+  if (existingBooking) {
+    return res.status(403).json({
+      message: "Sorry, this spot is already booked for the specified dates",
+      statusCode: 403,
+      errors: {
+        startDate: "Start date conflicts with an existing booking",
+        endDate: "End date conflicts with an existing booking"
+      }
+    })
+  }
+
+  const booking = await Booking.create({
+    spotId,
+    userId: user.id,
+    startDate,
+    endDate
+  })
+
+  res.status(200).json(booking);
 })
 
 // Get all Bookings for a Spot based on the Spot's id
 router.get('/:spotId/bookings', restoreUser, requireAuth, async (req, res) => {
-  const { startDate, endDate } = req.body
   const spotId = req.params.spotId
   const userId = req.user.id
 
-    if (!spotId) {
-      return res.status(404).json({ message: 'Spot couldn\'t be found', statusCode: 404 })
-    }
-
     const findSpot = await Spot.findByPk(spotId)
 
-    const findUser = await User.findByPk(userId)
 
     if(!findSpot || findSpot === []){
         return res.status(404).json({message: "Spot couldn\'t be found",statusCode: 404})
@@ -557,6 +565,7 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async (req, res) => {
         const serializedBookings = ownerBookings.map((booking) => {
           return {
             spotId: booking.spotId,
+            userId: booking.userId,
             startDate: booking.startDate,
             endDate: booking.endDate,
             user: {

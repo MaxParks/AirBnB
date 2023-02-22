@@ -82,13 +82,17 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
           const createReviewImage = await Reviewimage.create({
               reviewId: reviewId,
               ...imageData
-          });
-          return res.status(200).json(createReviewImage);
-        } else {
+          })
+
+          const { id, url } = createReviewImage
+          return res.status(200).json({ id, url })
+        } 
+        
+        else {
           return res.status(403).json({
             message: 'Forbidden',
             statusCode: 403,
-        })
+          })
         }
   })
 
@@ -104,15 +108,15 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
       where: { id: reviewId, userId },
     })
 
+    if (!review) {
+      return res.status(404).json({ message: 'Review couldn\'t be found', statusCode: 404 })
+    }
+
     if(review.userId !== userId){
       return res.status(403).json({
         message: 'Forbidden',
         statusCode: 403,
       })
-    }
-
-    if (!review) {
-      return res.status(404).json({ message: 'Review couldn\'t be found', statusCode: 404 })
     }
 
     

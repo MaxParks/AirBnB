@@ -57,7 +57,7 @@ router.put('/:bookingId',restoreUser, requireAuth, async (req, res) => {
 
     if (booking.userId !== req.user.id) {
         return res.status(403).json({
-          message: "You're not authorized to edit this booking",
+          message: "Forbidden",
           statusCode: 403
         })
       }
@@ -111,9 +111,7 @@ router.put('/:bookingId',restoreUser, requireAuth, async (req, res) => {
     booking.endDate = endDate
     await booking.save()
 
-    const updatedBooking = await Booking.findByPk(booking.id, {
-      include: Spot
-    })
+    const updatedBooking = await Booking.findByPk(booking.id)
 
     res.json(updatedBooking)
 })
@@ -135,7 +133,7 @@ router.delete('/:bookingId', restoreUser, requireAuth, async (req, res) => {
     }
 
     if (booking.userId !== userId && booking.Spot.userId !== userId) {
-      return res.status(403).json({ message: "Unauthorized", statusCode: 403 })
+      return res.status(403).json({ message: "Forbidden", statusCode: 403 })
     }
 
     await booking.destroy()

@@ -4,6 +4,8 @@ const {restoreUser, requireAuth } = require('../../utils/auth')
 const {Spot, Spotimage} = require('../../db/models')
 const router = express.Router()
 
+
+//Delete a Spot Image
 router.delete('/:imageId', restoreUser, requireAuth, async (req, res) => {
     const { imageId } = req.params
     const { userId } = req.user
