@@ -190,7 +190,7 @@ router.get('/',validationFilters, async (req, res, next) => {
           "price",
           "createdAt",
           "updatedAt",
-          [sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0),'avgRating'],
+          [sequelize.fn('ROUND', sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0)), 'avgRating'],
           [sequelize.fn('', sequelize.col('url')), 'previewImage']
       ],
 
@@ -230,7 +230,7 @@ router.get('/current',restoreUser, requireAuth, async (req, res) => {
         'price',
         'createdAt',
         'updatedAt',
-        [sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0),'avgRating'],
+        [sequelize.fn('ROUND', sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0)), 'avgRating'],
         [sequelize.fn('', sequelize.col('Spotimages.url')), 'previewImage']
       ],
       include: [
@@ -274,7 +274,7 @@ router.get('/:spotId', async (req, res, next) => {
           "description",
           "price",
           [sequelize.fn('count', sequelize.col('review')), 'numReviews'],
-          [sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0),'avgRating'],
+          [sequelize.fn('ROUND', sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('stars')), 0)), 'avgRating'],
 
       ],
 
