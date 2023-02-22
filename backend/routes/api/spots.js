@@ -437,7 +437,7 @@ router.get('/:spotId/reviews', async (req, res) => {
 });
 
 // Create a Review for a Spot based on the Spot's id
-router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (req, res, next) => {
+router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (req, res) => {
   const { spotId } = req.params
   const { review, stars } = req.body
   const userId = req.user.id

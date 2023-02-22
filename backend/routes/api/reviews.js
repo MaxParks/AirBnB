@@ -41,7 +41,7 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
           {
             model: Spot,
             attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price',
-            [sequelize.fn('', sequelize.col('url')), 'previewImage']]
+            [sequelize.fn('COALESCE', sequelize.fn('avg', sequelize.col('url')), 0),'previewImage']]
           },
           {
             model: Reviewimage,
@@ -55,37 +55,42 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
     // Add an Image to a Review based on the Review's id
     router.post('/:reviewId/images',restoreUser, requireAuth, validateReviewImageBody, async (req, res) => {
 
-        const { user } = req
-        const { reviewId } = req.params
-        const { url } = req.body
-        
-        const review = await Review.findOne({
-            where: { id: reviewId, userId: user.id },
-          })
-      
-        if (!review) {
+      const { user } = req
+      const imageData = req.body
+      const reviewId = req.params.reviewId
+  
+      const findReview = await Review.findByPk(reviewId)
+  
+      if(!findReview){
           return res.status(404).json({
-            message: "Review couldn't be found",
-            statusCode: 404,
-          });
-        }
-      
-        const count = await Reviewimage.count({ where: { reviewId } })
+              message: "Review couldn't be found",
+              statusCode: 404
+          })
+      }
+  
+      const count = await Reviewimage.count({ where: { reviewId } })
         if (count >= 10) {
           return res.status(403).json({
             message: 'Maximum number of images for this resource was reached',
             statusCode: 403,
           });
         }
-      
-        const reviewImage = await Reviewimage.create({
-            reviewId,
-            url,
-          })
 
-            return res.status(200).json({ id: reviewImage.id, url: reviewImage.url })
         
-      });
+  
+        if(findReview.userId === user.id){
+          const createReviewImage = await Reviewimage.create({
+              reviewId: reviewId,
+              ...imageData
+          });
+          return res.status(200).json(createReviewImage);
+        } else {
+          return res.status(403).json({
+            message: 'Forbidden',
+            statusCode: 403,
+        })
+        }
+  })
 
 
       // Edit a Review
@@ -98,6 +103,13 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
     const review = await Review.findOne({
       where: { id: reviewId, userId },
     })
+
+    if(review.userId !== userId){
+      return res.status(403).json({
+        message: 'Forbidden',
+        statusCode: 403,
+      })
+    }
 
     if (!review) {
       return res.status(404).json({ message: 'Review couldn\'t be found', statusCode: 404 })
@@ -116,11 +128,9 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
 
 // Delete a Review
 
-router.delete('/:reviewId', restoreUser, requireAuth, async (req, res, next) => {
-
-    const {user} = req
+router.delete('/:reviewId', restoreUser, requireAuth, async (req, res) => {
+  const userId = req.user.id
     const reviewId = req.params.reviewId
-
     const findReview = await Review.findByPk(reviewId)
 
     if (!findReview) {
@@ -128,6 +138,10 @@ router.delete('/:reviewId', restoreUser, requireAuth, async (req, res, next) => 
           message: 'Review couldn\'t be found',
           statusCode: 404
         });
+      }
+
+      if (findReview.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden", statusCode: 403 })
       }
 
     await findReview.destroy()
