@@ -254,7 +254,7 @@ router.get('/current',restoreUser, requireAuth, async (req, res) => {
 })
 
 // Get details of a Spot from an id
-router.get('/:spotId', async (req, res, next) => {
+router.get('/:spotId', async (req, res) => {
 
   const spotId = req.params.spotId
 
@@ -304,8 +304,11 @@ router.get('/:spotId', async (req, res, next) => {
 
   })
 
-  if(!theSpot){
-      return next(new Error("Spot couldn't be found", 404))
+  if (!theSpot) {
+    return res.status(404).json({
+      message: "Spot couldn't be found",
+      statusCode: 404,
+    })
   }
 
   return res.json({
@@ -463,7 +466,7 @@ router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (
 router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
   const { user } = req
   const { spotId } = req.params
-  const { startDate, endDate } = req.body
+  let { startDate, endDate } = req.body
   startDate = new Date(startDate)
   endDate = new Date(endDate)
 
