@@ -463,132 +463,71 @@ router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (
 
 // Create a Booking from a Spot based on the Spot's id
 
-router.post('/:id/bookings', requireAuth, async(req,res)=>{
-    const spotId = req.params.id
-    const { startDate, endDate } = req.body
-    const spot = await Spot.findByPk(spotId)
+router.post('/:id/bookings', requireAuth, async (req, res) => {
+  try {
+      const spotId = req.params.id
+      const { startDate, endDate } = req.body
+      const spot = await Spot.findByPk(spotId)
 
-    if(!spot){
-        return res.status(404).json({
-            message:"Spot couldnt be found",
-            statusCode: 404
-        })
-    }
-    if(spot.OwnerId === req.user.id){
-        return res.status(403).json(
-        {
-            message: 'You cannot book your own spot',
-            statusCode: 403
-        }
-        )
-    }
-    if(endDate <= startDate){
-        return res.status(400).json({
-            message: "Validation error",
-            statusCode: 400,
-            errors:[
-                "endDate cannot be on or before startDate"
-            ]
-        })
-    } 
-    //a
-    const existingBookings = await Booking.findAll({
-         attributes:[[sequelize.fn('date',sequelize.col('startDate')),'startDate'],
-         [sequelize.fn('date',sequelize.col('endDate')),'endDate']],
-        where: {spotId,
-            [Op.or]:[
-                {startDate: {[Op.between]: [startDate, endDate]}},
-                {endDate: {[Op.between]: [startDate, endDate]}},
-                {startDate:{[Op.lte]: startDate},endDate:{[Op.gte]: endDate}}
-            ]
-        }
-    }) 
-    if(existingBookings.length){
-        return res.status(403).json({
-            message:"Sorry, this spot is already booked for the specified dates",
-            statusCode: 403 ,
-            errors:[
-                "Start date conflicts with an existing booking",
-                "End date conflicts with an existing booking"
-            ]
-        })
-    }
-    const booking = await Booking.create({
+      if (!spot) {
+          return res.status(404).json({
+              message: "Spot couldn't be found",
+              statusCode: 404
+          })
+      }
+      if (spot.OwnerId === req.user.id) {
+          return res.status(403).json({
+              message: 'You cannot book your own spot',
+              statusCode: 403
+          })
+      }
+      if (endDate <= startDate) {
+          return res.status(400).json({
+              message: "Validation error",
+              statusCode: 400,
+              errors: [
+                  "endDate cannot be on or before startDate"
+              ]
+          })
+      }
+      const existingBookings = await Booking.findAll({
+          attributes: [[sequelize.fn('date', sequelize.col('startDate')), 'startDate'],
+          [sequelize.fn('date', sequelize.col('endDate')), 'endDate']],
+          where: {
+              spotId,
+              [Op.or]: [
+                  { startDate: { [Op.between]: [startDate, endDate] } },
+                  { endDate: { [Op.between]: [startDate, endDate] } },
+                  { startDate: { [Op.lte]: startDate }, endDate: { [Op.gte]: endDate } }
+              ]
+          }
+      })
+      if (existingBookings.length) {
+          return res.status(403).json({
+              message: "Sorry, this spot is already booked for the specified dates",
+              statusCode: 403,
+              errors: [
+                  "Start date conflicts with an existing booking",
+                  "End date conflicts with an existing booking"
+              ]
+          })
+      }
+      const booking = await Booking.create({
 
-        userId: req.user.id,
-        spotId: spotId,
-        startDate: new Date(req.body.startDate).toISOString().slice(0, 10),
-        endDate: new Date(req.body.endDate).toISOString().slice(0, 10),
-    })
-    res.json(booking)
+          userId: req.user.id,
+          spotId: spotId,
+          startDate: new Date(req.body.startDate).toISOString().slice(0, 10),
+          endDate: new Date(req.body.endDate).toISOString().slice(0, 10),
+      })
+      res.json(booking)
+  } catch (error) {
+      console.error(error)
+      res.status(500).json({
+          message: 'Internal server error',
+          statusCode: 500
+      })
+  }
 })
 
-
-// Get all Bookings for a Spot based on the Spot's id
-router.get('/:spotId/bookings', restoreUser, requireAuth, async (req, res) => {
-  const spotId = req.params.spotId
-  const userId = req.user.id
-
-    const findSpot = await Spot.findByPk(spotId)
-
-
-    if(!findSpot || findSpot === []){
-        return res.status(404).json({message: "Spot couldn\'t be found",statusCode: 404})
-      }
-
-      if (findSpot.ownerId === userId) {
-        const ownerBookings = await Booking.findAll({
-          where: {
-            userId: userId,
-            spotId: findSpot.id
-          },
-          include: {
-            model: User,
-            attributes: ['id', 'firstName', 'lastName']
-          },
-          attributes: ['spotId', 'startDate', 'endDate']
-        });
-      
-        const serializedBookings = ownerBookings.map((booking) => {
-          return {
-            spotId: booking.spotId,
-            userId: booking.userId,
-            startDate: booking.startDate,
-            endDate: booking.endDate,
-            user: {
-              id: booking.User.id,
-              firstName: booking.User.firstName,
-              lastName: booking.User.lastName
-            }
-          }
-        })
-      
-        return res.status(200).json({
-          bookings: serializedBookings
-        })
-      }
-
-      if (findSpot.ownerId !== userId) {
-        const userBookings = await Booking.findAll({
-          where: {
-            userId: userId,
-            spotId: findSpot.id
-          },
-          attributes: ['spotId', 'startDate', 'endDate']
-        })
-      
-        const serializedBookings = userBookings.map((booking) => {
-          return {
-            spotId: booking.spotId,
-            startDate: booking.startDate,
-            endDate: booking.endDate
-          }
-        })
-      
-        return res.status(200).json({
-          bookings: serializedBookings
-        })
-      }
-    })
 
 module.exports = router;
