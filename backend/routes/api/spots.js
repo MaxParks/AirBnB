@@ -497,11 +497,11 @@ router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
         })
     }
 
-    if(findSpot.dataValues.ownerId === user.id){
+    if(Spot.ownerId === req.user.id){
 
-        return res.status(400).json({
+        return res.status(403).json({
             message: "Validation error",
-            statusCode: 400,
+            statusCode: 403,
             errors: {
                 endDate: "Spot cannot belong to the current user"
             }
@@ -547,9 +547,7 @@ router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
     })
 
 
-    return res.status(200).json({
-        ...newBooking.dataValues
-    })
+    res.json(newBooking)
 
 })
 
