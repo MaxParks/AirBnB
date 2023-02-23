@@ -463,92 +463,64 @@ router.post('/:spotId/reviews', restoreUser, requireAuth,validateReview, async (
 
 // Create a Booking from a Spot based on the Spot's id
 
-router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
-  const { user } = req
+router.post('/:id/bookings', requireAuth, async(req,res)=>{
+    const spotId = req.params.id
+    const { startDate, endDate } = req.body
+    const spot = await Spot.findByPk(spotId)
 
-    const spotId = req.params.spotId
-
-    if(!spotId || spotId === 'null'){
+    if(!spot){
         return res.status(404).json({
-            message: "Invalid SpotId",
+            message:"Spot couldnt be found",
             statusCode: 404
         })
     }
-
-    const bookingData = req.body
-
-    const { startDate, endDate } = bookingData
-    const findSpot = await Spot.findByPk(spotId)
-
-    if(!findSpot){
-        return res.status(404).json({
-            message: "Spot couldn't be found",
-            statusCode: 404
-        })
+    if(spot.OwnerId === req.user.id){
+        return res.status(403).json(
+        {
+            message: 'You cannot book your own spot',
+            statusCode: 403
+        }
+        )
     }
-
-    if(!startDate || !endDate || (new Date(startDate) > new Date(endDate))){
+    if(endDate <= startDate){
         return res.status(400).json({
             message: "Validation error",
             statusCode: 400,
-            errors: {
-                endDate: "endDate cannot be on or before startDate"
-            }
+            errors:[
+                "endDate cannot be on or before startDate"
+            ]
         })
-    }
-
-    if(Spot.ownerId === req.user.id){
-
-        return res.status(403).json({
-            message: "Validation error",
-            statusCode: 403,
-            errors: {
-                endDate: "Spot cannot belong to the current user"
-            }
-        })
-
-    }
-
-
-
-    const doesBookingAlreadyExist = await Booking.findAll({
-        where: {
-            spotId: spotId,
-            [Op.or]: [{
-                startDate: {
-                    [Op.between]: [startDate, endDate]
-                }
-            }, {
-                endDate: {
-                    [Op.between]: [startDate, endDate]
-                }
-            }]
-
+    } 
+    //a
+    const existingBookings = await Booking.findAll({
+         attributes:[[sequelize.fn('date',sequelize.col('startDate')),'startDate'],
+         [sequelize.fn('date',sequelize.col('endDate')),'endDate']],
+        where: {spotId,
+            [Op.or]:[
+                {startDate: {[Op.between]: [startDate, endDate]}},
+                {endDate: {[Op.between]: [startDate, endDate]}},
+                {startDate:{[Op.lte]: startDate},endDate:{[Op.gte]: endDate}}
+            ]
         }
-    })
-
-    if(doesBookingAlreadyExist.length){
+    }) 
+    if(existingBookings.length){
         return res.status(403).json({
-            message: "Sorry, this spot is already booked for the specified dates",
-            statusCode: 403,
-            errors: {
-              startDate: "Start date conflicts with an existing booking",
-              endDate: "End date conflicts with an existing booking"
-            }
+            message:"Sorry, this spot is already booked for the specified dates",
+            statusCode: 403 ,
+            errors:[
+                "Start date conflicts with an existing booking",
+                "End date conflicts with an existing booking"
+            ]
         })
     }
+    const booking = await Booking.create({
 
-    const newBooking = await Booking.create({
-
-        spotId,
-        userId: user.id,
-        startDate:new Date(req.body.startDate).toISOString().slice[0,10],
-        endDate:new Date(req.body.endDate).toISOString().slice[0,10]
+        userId: req.user.id,
+        spotId: spotId,
+        startDate: new Date(req.body.startDate).toISOString().slice(0, 10),
+        endDate: new Date(req.body.endDate).toISOString().slice(0, 10),
     })
-
-
-    res.json(newBooking)
-
+    res.json(booking)
 })
 
 
