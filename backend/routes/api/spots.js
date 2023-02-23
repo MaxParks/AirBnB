@@ -542,8 +542,8 @@ router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
 
         spotId,
         userId: user.id,
-        startDate,
-        endDate
+        startDate:new Date(req.body.startDate).toISOString().slice[0,10],
+        endDate:new Date(req.body.endDate).toISOString().slice[0,10]
     })
 
 
