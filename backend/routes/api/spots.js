@@ -467,8 +467,8 @@ router.post('/:spotId/bookings',restoreUser,requireAuth, async (req, res) => {
   const { user } = req
   const { spotId } = req.params
   let { startDate, endDate } = req.body
-  startDate = new Date(startDate)
-  endDate = new Date(endDate)
+  startDate = new Date(Date.parse(startDate))
+  endDate = new Date(Date.parse(endDate))
 
 
   if (endDate <= startDate) {
