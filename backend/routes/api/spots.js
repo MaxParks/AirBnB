@@ -584,6 +584,6 @@ router.post('/:id/bookings', requireAuth, async (req, res) => {
 })
 
 
+// Left some commented out console logs and unecessary try catch blocks cause i needed to test some stuff
 
-
-module.exports = router;
+module.exports = router
