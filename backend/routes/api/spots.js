@@ -101,12 +101,13 @@ const validateSpotBody = [
 
 // GET all spots
 router.get('/',validationFilters, async (req, res, next) => {
+  
     const { maxLat, minLat, minLng, maxLng, minPrice, maxPrice } = req.query
     const where = {}
     let {page, size} = req.query;
 
-    if (!page) page = 1;
-    if (!size) size = 20;
+    if (!page) page = 1
+    if (!size) size = 20
 
     let pagination = {}
     if (parseInt(page) >= 1 && parseInt(size) >= 1) {
@@ -115,7 +116,9 @@ router.get('/',validationFilters, async (req, res, next) => {
     }
     
     // Validations
-    const errors = {};
+
+    const errors = {}
+
     if (page < 1 || page > 10) {
       errors.page = 'Page must be an integer between 1 and 10';
     }
@@ -145,7 +148,7 @@ router.get('/',validationFilters, async (req, res, next) => {
         message: 'Validation Error',
         statusCode: 400,
         errors: errors
-      });
+      })
     }
 
     const allSpots = await Spot.findAll({
@@ -185,7 +188,7 @@ router.get('/',validationFilters, async (req, res, next) => {
       page,
       size
   })
-});
+})
 
 // Get all Spots owned by the Current User
 router.get('/current',restoreUser, requireAuth, async (req, res) => {
@@ -243,29 +246,20 @@ router.get('/:spotId/reviews', async (req, res) => {
     const reviews = await Review.findAll({
       where: { spotId },
       include: [
-            {
-                model: User,
-                attributes: [
-                    'id', 'firstName', 'lastName'
-                ]
-            },
-            {
-                model: Reviewimage,
-                attributes: [
-                    'id', 'url'
-                ]
-            },
-        ]
+            {model: User,attributes: ['id', 'firstName', 'lastName']},
+            {model: Reviewimage,attributes: ['id', 'url']},
+          ]
     });
-    return res.status(200).json({ Reviews: reviews });
-  } catch (error) {
+    return res.status(200).json({ Reviews: reviews })
+  } 
+  catch (error) {
     console.error(error);
     return res.status(500).json({
       message: 'Internal server error',
       statusCode: 500
-    });
+    })
   }
-});
+})
 
 // Get details of a Spot from an id
 router.get('/:spotId', async (req, res) => {
@@ -295,9 +289,7 @@ router.get('/:spotId', async (req, res) => {
       include: [
           {
               model: Spotimage,
-              attributes: [
-                  'id', 'url', 'preview'
-              ],
+              attributes: ['id', 'url', 'preview'],
           },
           {
               model: Review,
@@ -306,11 +298,7 @@ router.get('/:spotId', async (req, res) => {
           {
               model: User,
               as: "Owner",
-              attributes: [
-                  'id', 'firstName', 'lastName'
-              ],
-
-
+              attributes: ['id', 'firstName', 'lastName'],
           }
       ],
 
@@ -426,9 +414,7 @@ router.post('/', restoreUser, requireAuth,validateSpotBody, async (req, res, nex
 router.post('/:spotId/images', restoreUser, requireAuth, async (req, res) => {
 
   const spotId = req.params.spotId
-
   const newImage = req.body
-
   const {user} = req
 
 
@@ -459,7 +445,7 @@ router.post('/:spotId/images', restoreUser, requireAuth, async (req, res) => {
       message: 'Internal server error',
       statusCode: 500,
       errors: error,
-    });
+    })
   }
 })
 

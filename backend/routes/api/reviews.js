@@ -73,7 +73,7 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
           return res.status(403).json({
             message: 'Maximum number of images for this resource was reached',
             statusCode: 403,
-          });
+          })
         }
 
         
@@ -133,7 +133,7 @@ router.get('/current', restoreUser, requireAuth, async (req, res) => {
 // Delete a Review
 
 router.delete('/:reviewId', restoreUser, requireAuth, async (req, res) => {
-  const userId = req.user.id
+    const userId = req.user.id
     const reviewId = req.params.reviewId
     const findReview = await Review.findByPk(reviewId)
 
@@ -141,7 +141,7 @@ router.delete('/:reviewId', restoreUser, requireAuth, async (req, res) => {
         return res.status(404).json({
           message: 'Review couldn\'t be found',
           statusCode: 404
-        });
+        })
       }
 
       if (findReview.userId !== userId) {

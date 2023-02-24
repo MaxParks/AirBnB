@@ -28,8 +28,8 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res) => {
       })
     }
   
-    await image.destroy();
-    return res.json({ message: 'Successfully deleted', statusCode: 200 });
+    await image.destroy()
+    return res.json({ message: 'Successfully deleted', statusCode: 200 })
   })
 
 module.exports = router

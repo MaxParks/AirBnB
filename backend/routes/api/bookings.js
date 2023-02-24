@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.get('/current', restoreUser,requireAuth, async (req, res) => {
    
-      const userId = req.user.id;
+      const userId = req.user.id
       const bookings = await Booking.findAll({
         where: { userId },
         include: [
@@ -40,7 +40,8 @@ router.get('/current', restoreUser,requireAuth, async (req, res) => {
           },
         ],
       })
-      res.status(200).json({ Bookings: bookings });
+      
+      res.status(200).json({ Bookings: bookings })
     })
 
     // Edit a Booking

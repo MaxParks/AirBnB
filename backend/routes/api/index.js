@@ -70,4 +70,4 @@ router.use('/review-images', reviewImagesRouter)
 //     res.json({ requestBody: req.body });
 //   });
 
-module.exports = router;
+module.exports = router
