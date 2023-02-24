@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Reviewimage',
+    defaultScope: {
+      attributes: {
+        include: [
+          [sequelize.fn('strftime', '%Y-%m-%d %H:%M:%S', sequelize.col('createdAt')), 'createdAt'],
+          [sequelize.fn('strftime', '%Y-%m-%d %H:%M:%S', sequelize.col('updatedAt')), 'updatedAt']
+        ]
+      }
+    }
   });
   return Reviewimage;
 };
