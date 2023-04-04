@@ -24,10 +24,10 @@ ul {
     transition: all 0.3s ease-in-out;
   }
   
-  a:hover {
+  /* a:hover {
     color: white;
-    background-color: #333;
-  }
+    background-color: red;
+  } */
   
   .profile-dropdown {
     position: absolute;

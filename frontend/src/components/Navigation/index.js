@@ -11,8 +11,8 @@ function Navigation({ isLoaded }){
   return (
     <ul>
       <li>
-      <NavLink exact to="/" style={{ fontSize: '24px' }}>
-    <i className="fa-brands fa-airbnb fa-bounce" style={{ fontSize: '36px' }}></i>
+      <NavLink exact to="/" style={{ fontSize: '24px', color: 'red' }}>
+    <i className="fa-brands fa-airbnb fa-bounce" style={{ fontSize: '36px', color: 'red' }}></i>
     MaxBnB</NavLink>
       </li>
       {isLoaded && (
