@@ -37,22 +37,14 @@ function ProfileButton({ user }) {
     closeMenu();
   };
 
-  // const demoUserLogin = (e) =>{
-  //   e.preventDefault()
-  //   return dispatch(sessionActions.login({
-  //     credential: 'Demo-lition',
-  //     password: 'password'
-  //   }))
-    
-  // }
 
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
     <>
       <button onClick={openMenu}>
-      <i className="fa-solid fa-bars fa-2xl" style={{ marginRight: '10px' }}></i>
-      <i className="fa-solid fa-user fa-2xl"></i>
+      <i className="fa-solid fa-bars fa-2xl" style={{ marginRight: '5px', width: '30px'}}></i>
+      <i className="fa-solid fa-user fa-2xl" style={{ width: '30px' }}></i>
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (

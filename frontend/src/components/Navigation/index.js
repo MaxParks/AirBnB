@@ -13,7 +13,7 @@ function Navigation({ isLoaded }){
       <li>
       <NavLink exact to="/" style={{ fontSize: '24px' }}>
     <i className="fa-brands fa-airbnb fa-bounce" style={{ fontSize: '36px' }}></i>
-    AirBnB</NavLink>
+    MaxBnB</NavLink>
       </li>
       {isLoaded && (
         <li>

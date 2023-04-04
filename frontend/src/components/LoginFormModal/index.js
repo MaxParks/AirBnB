@@ -33,6 +33,10 @@ function LoginFormModal() {
     }))
     .then(closeModal)
   }
+
+  const isFormValid = () => {
+    return credential.length >= 4 && password.length >= 6;
+  }
  
   return (
     <div className="login-container">
@@ -44,7 +48,7 @@ function LoginFormModal() {
           ))}
         </ul>
         <label>
-         
+        
           <input
           className="input-field"
           placeholder=" Username or Email"
@@ -67,26 +71,14 @@ function LoginFormModal() {
           />
           <br/>
         </label>
-        <li onClick={demoUserLogin}>
-            <button style={{ 
-            padding: '10px', 
-            backgroundColor: 'green', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '5px',
-            cursor: 'pointer',
-            textDecoration: 'none'
-        }}>Demo Login</button>
-            </li>
-        <button type="submit" style={{ 
-            padding: '10px', 
-            backgroundColor: 'green', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '5px',
-            cursor: 'pointer',
-            textDecoration: 'none'
-        }}>Log In</button>
+        
+        <button type="submit"
+        disabled={!isFormValid()}
+         >Log In</button>
+
+          <div onClick={demoUserLogin} style={{ marginTop: '10px', marginBottom: '10px' }}>
+            <button >Demo User Login</button>
+            </div>
        
       </form>
     </div>
