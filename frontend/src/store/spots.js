@@ -73,8 +73,9 @@ export const fetchSpot = (spotId) => async dispatch => {
 }
 
 export const fetchUserSpots = () => async dispatch => {
-    const response = await csrfFetch('/api/spots/current')
-     
+    
+    try{
+        const response = await csrfFetch('/api/spots/current')
          if(response.ok) {
         const payload = await response.json();
         const spots = {}
@@ -84,6 +85,11 @@ export const fetchUserSpots = () => async dispatch => {
         // console.log('PAYLOAD333', payload)
         dispatch(loadUserSpots(spots))
     }
+} catch(error){
+    if (error.errors){
+        return error.errors;
+    }
+}
 }
 
 export const postSpot = (payload) => async dispatch => {

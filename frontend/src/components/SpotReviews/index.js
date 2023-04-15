@@ -39,7 +39,8 @@ const SpotReviews = () => {
 
 
   // show reviews and button to make a review
-  // my post your review button still showing when user is the creator I messed something
+  // my post your review button still showing when user is the creator I messed something up 
+  // it was working
   return (
     <div>
       {spot?.ownerId !== user?.id &&

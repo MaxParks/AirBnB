@@ -190,9 +190,10 @@ router.get('/',validationFilters, async (req, res, next) => {
 })
 
 // Get all Spots owned by the Current User
-router.get('/current',restoreUser, requireAuth, async (req, res) => {
+router.get('/current',async (req, res) => {
     const { user } = req
-    const allSpots = await Spot.findAll({
+    if (user) {
+      const allSpots = await Spot.findAll({
       attributes: [
         'id',
         'ownerId',
@@ -228,6 +229,12 @@ router.get('/current',restoreUser, requireAuth, async (req, res) => {
     return res.status(200).json({
       Spots: allSpots
     })
+    
+    }
+    return res.status(404).json({
+      errors:'no current signed in user'
+    })
+    
 })
 
 // Get all Reviews by a Spot's id
