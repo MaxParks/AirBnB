@@ -1,0 +1,39 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem;
+  }
+  
+  .form h1 {
+    font-size: 40px;
+    margin-bottom: 1rem;
+  }
+  
+  .form h2 {
+    font-size: 25px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form p {
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+  
+  
+  .form input,
+  .form textarea {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    border:2px solid black;
+    width: 100%;
+  }
+  
+
+  .form .field-error {
+    color: red;
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 0.5rem;
+  }
+  

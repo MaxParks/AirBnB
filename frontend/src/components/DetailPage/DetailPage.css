@@ -1,0 +1,98 @@
+.images-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.preview-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.additional-images-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.additional-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.spotname {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.location {
+  font-size: 20px;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.hosted {
+  font-size: 20px;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.description {
+  font-size: 20px;
+  margin-top: 1rem;
+  max-width: 600px;
+  overflow: auto;
+  text-align: center;
+}
+
+.detailscard {
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #f7f7f7;
+  margin-top: 1rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reserve-button {
+  background-color: grey;
+  border: black;
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.review-container {
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #f7f7f7;
+  margin-top: 1rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-image111 {
+  width: 900px;
+  height: 600px;
+  object-fit: cover;
+}
+
+.details-review {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}

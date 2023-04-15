@@ -19,16 +19,41 @@ function SignupFormPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      setErrors([]);
-      return dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
-        .catch(async (res) => {
-          const data = await res.json();
-          if (data && data.errors) setErrors(data.errors);
-        });
-    }
-    return setErrors(['Confirm Password field must be the same as the Password field']);
-  };
+    setErrors([]);
+  
+    const emailRegex = /^\S+@\S+\.\S+$/;
+  
+    return dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
+      .catch(async (res) => {
+        const data = await res.json();
+        if (res.status === 403) {
+          setErrors(['Username or Email taken']);
+        }
+        if (!emailRegex.test(email)) {
+          setErrors(errors => [...errors, "Please provide a valid email"]);
+        }
+        if (username.includes("@")) {
+          setErrors(errors => [...errors, "Username cannot be an email"]);
+        }
+        else if (data && data.errors) {
+          setErrors([...data.errors]);
+        }
+      });
+  }
+
+  const isFormValid = () => {
+    return (
+      email.trim() !== "" &&
+      username.trim() !== "" &&
+      username.trim().length >= 4 &&
+      firstName.trim() !== "" &&
+      lastName.trim() !== "" &&
+      password.trim() !== "" &&
+      password.trim().length >= 6 &&
+      confirmPassword.trim() !== "" &&
+      password === confirmPassword
+    )
+}
 
   return (
     <form onSubmit={handleSubmit}>
@@ -89,7 +114,10 @@ function SignupFormPage() {
           required
         />
       </label>
-      <button type="submit">Sign Up</button>
+      <button type="submit" 
+        disabled={!isFormValid()}
+        className="signup-button"
+        >Sign Up</button>
     </form>
   );
 }
