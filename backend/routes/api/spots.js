@@ -304,7 +304,7 @@ router.get('/:spotId', async (req, res) => {
       group:['Reviews.spotId', 'Spot.id', 'Spotimages.id', 'Owner.id'],
 
   })
-  console.log('@@@@@@@@@@', theSpot)
+  // console.log('@@@@@@@@@@', theSpot)
 
   if (!theSpot) {
     return res.status(404).json({

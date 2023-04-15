@@ -87,10 +87,8 @@ export const fetchUserSpots = () => async dispatch => {
 }
 
 export const postSpot = (payload) => async dispatch => {
-
-    let { imagesArr } = payload;
-
-    imagesArr = imagesArr.map((url,i) => {
+    let { imagesArray } = payload;
+    imagesArray = imagesArray.map((url,i) => {
         let obj = {}
         if (i === 0) {
                 obj.preview = true;
@@ -117,7 +115,7 @@ export const postSpot = (payload) => async dispatch => {
         // console.log('SPOTTTTTTTTTTTT', spot)
 
         dispatch(addSpot(spot))
-        for await (let image of imagesArr) {
+        for await (let image of imagesArray) {
             let imageRes = await csrfFetch(`/api/spots/${spot.id}/images`, {
                 method: 'POST',
                 body: JSON.stringify(image)
