@@ -1,0 +1,18 @@
+.thing-one {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 50px;
+}
+
+.thing-two {
+  list-style: none;
+}
+
+
+@media (min-width: 1200px) {
+  .thing-one {
+    grid-template-columns: repeat(auto-fit, minmax(23%, 1fr));
+  }
+}

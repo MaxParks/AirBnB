@@ -1,0 +1,32 @@
+.modal4 {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: white;
+}
+
+.text-area2 {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 5px;
+  width: 200px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+
+  .fa-star {
+  font-size: 28px;
+  color: #ddd;
+  margin-right: 5px;
+  cursor: pointer;
+  margin: 10px;
+  }
+  
+  .fa-solid {
+  color: #ffc107;
+  }
+  
+  

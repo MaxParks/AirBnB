@@ -17,10 +17,11 @@ function OpenModalMenuItem({
   };
 
   return (
-    <li onClick={onClick}>
+    <li onClick={onClick} style={{ marginRight: '30px' }}>
         <button style={{ 
             padding: '10px', 
-            backgroundColor: 'green', 
+            backgroundColor: 'green',
+            margin: '5px', 
             color: 'white', 
             border: 'none', 
             borderRadius: '5px',

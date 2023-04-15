@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import * as sessionActions from "../../store/session";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
+import { useHistory } from 'react-router-dom';
 import "./LoginForm.css";
 
 function LoginFormModal() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [credential, setCredential] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
@@ -17,21 +19,24 @@ function LoginFormModal() {
     setErrors([]);
     return dispatch(sessionActions.login({ credential, password }))
       .then(closeModal)
-      .catch(
-        async (res) => {
-          const data = await res.json();
-          if (data && data.errors) setErrors(data.errors);
+      .catch(async (res) => {
+        const data = await res.json();
+        if (res.status === 401) {
+          setErrors(['Invalid credentials. Please try again.']);
+        } else if (data && data.errors) {
+          setErrors(data.errors);
         }
-      );
+      });
   };
 
   const demoUserLogin = (e) =>{
     e.preventDefault()
-    return dispatch(sessionActions.login({
+    dispatch(sessionActions.login({
       credential: 'Demo-lition',
       password: 'password'
     }))
     .then(closeModal)
+    history.push('/');
   }
 
   const isFormValid = () => {

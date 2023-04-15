@@ -21,8 +21,24 @@ function LoginFormPage() {
     return dispatch(sessionActions.login({ credential, password }))
       .catch(async (res) => {
         const data = await res.json();
-        if (data && data.errors) setErrors(data.errors);
+        if (res.status === 401) {
+          setErrors(['Invalid credentials. Please try again.']);
+        } else if (data && data.errors) {
+          setErrors(data.errors);
+        }
       });
+  };
+
+  const demoUserLogin = (e) =>{
+    e.preventDefault()
+    return dispatch(sessionActions.login({
+      credential: 'Demo-lition',
+      password: 'password'
+    }))
+  }
+
+  const isFormValid = () => {
+    return credential.length >= 4 && password.length >= 6;
   }
 
   return (
@@ -48,7 +64,13 @@ function LoginFormPage() {
           required
         />
       </label>
-      <button type="submit">Log In</button>
+      <button type="submit"
+        disabled={!isFormValid()}
+         >Log In</button>
+
+          <div onClick={demoUserLogin} style={{ marginTop: '10px', marginBottom: '10px' }}>
+            <button >Demo User Login</button>
+            </div>
     </form>
   );
 }

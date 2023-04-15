@@ -1,0 +1,29 @@
+
+ 
+ .tooltip{ 
+     position: absolute;
+     display: flex;
+     bottom: 100%;
+     left: 50%;
+     visibility: hidden;
+     transform: translateX(-50%);
+     background-color: black;
+     color: #fff;
+     padding: 0.5rem;
+     border-radius: 0.25rem;
+     font-size: 10px !important;
+     text-align: center;
+     white-space: nowrap;
+     z-index: 2;
+ }
+ 
+ .tooltip-arrow {
+     position: absolute;
+     top: 100%;
+     left: 50%;
+     border-width: 5px;
+     border-style: solid;
+     border-color: rgba(0, 0, 0, 0.7) transparent transparent;
+   }
+ 
+   

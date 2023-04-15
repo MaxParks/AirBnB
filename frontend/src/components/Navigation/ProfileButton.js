@@ -4,8 +4,11 @@ import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
+import { Link } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 
 function ProfileButton({ user }) {
+  const history = useHistory();
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
   const ulRef = useRef();
@@ -35,6 +38,7 @@ function ProfileButton({ user }) {
     e.preventDefault();
     dispatch(sessionActions.logout());
     closeMenu();
+    history.push('/');
   };
 
 
@@ -43,16 +47,22 @@ function ProfileButton({ user }) {
   return (
     <>
       <button onClick={openMenu}>
-      <i className="fa-solid fa-bars fa-2xl" style={{ marginRight: '5px', width: '30px'}}></i>
-      <i className="fa-solid fa-user fa-2xl" style={{ width: '30px' }}></i>
+      <i className="fa-solid fa-bars fa-2xl" style={{ marginRight: '05px', width: '30px'}}></i>
+      <i className="fa-solid fa-user fa-2xl" style={{ width: '10px', margin: '10px' }}></i>
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
           <>
-            <li>Hello, {user.username}</li>
-            <li>{user.firstName} {user.lastName}</li>
+            <li>Hello, {user.firstName}</li>
             <li>{user.email}</li>
+            
             <li>
+            <Link to='/spots/current' className="manage-spot">
+            <u>Manage Spots</u>
+            </Link>
+            </li>
+            
+            <li className="log-button">
               <button onClick={logout}>Log Out</button>
             </li>
           </>

@@ -5,30 +5,48 @@ import * as sessionActions from "../../store/session";
 import './SignupFormModal.css';
 
 function SignupFormModal() {
+
+  // state variables
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+
+   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [password, setPassword] = useState("");
+   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [errors, setErrors] = useState([]);
   const { closeModal } = useModal();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === confirmPassword) {
-      setErrors([]);
-      return dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
-        .then(closeModal)
-        .catch(async (res) => {
-          const data = await res.json();
-          if (data && data.errors) setErrors(data.errors);
-        });
-    }
-    return setErrors(['Confirm Password field must be the same as the Password field']);
+    setErrors([]);
+  
+    //for email validation
+    const emailRegex = /^\S+@\S+\.\S+$/;
+  
+    // dispatch the signup action to the store
+    return dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
+      .then(closeModal)
+      .catch(async (res) => {
+        const data = await res.json();
+        if (res.status === 403) {
+          setErrors(['Username or Email taken']);
+        }
+        if (!emailRegex.test(email)) {
+          setErrors(errors => [...errors, "Please provide a valid email"]);
+        }
+        if (username.includes("@")) {
+          setErrors(errors => [...errors, "Username cannot be an email"]);
+        }
+        else if (data && data.errors) {
+          setErrors([...data.errors]);
+        }
+      });
   }
 
+  //form validation
   const isFormValid = () => {
     return (
       email.trim() !== "" &&
@@ -43,6 +61,7 @@ function SignupFormModal() {
     )
 }
 
+//signup form
   return (
     <div id="signup-container">
       <h1>Sign Up</h1>
