@@ -3,7 +3,7 @@ const {Op} = require("sequelize")
 const {restoreUser, requireAuth} = require('../../utils/auth');
 const { sequelize, User, Spot, Spotimage, Review, Reviewimage, Booking} = require('../../db/models');
 const { handleValidationErrors } = require('../../utils/validation');
-const {body,query} = require('express-validator');
+const {check,query} = require('express-validator');
 const router = express.Router();
 
 const validationFilters = [
@@ -15,22 +15,22 @@ const validationFilters = [
       .customSanitizer(val => val || 20)
       .isInt({ min: 1, max: 20 })
       .withMessage("Size must be greater than or equal to 1"),
-  query('maxLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Maximum latitude is invalid")
-      .optional(),
-  query('minLat')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Minimum latitude is invalid")
-      .optional(),
-  query('minLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Maximum longitude is invalid")
-      .optional(),
-  query('maxLng')
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Minimum longitude is invalid")
-      .optional(),
+  // query('maxLat')
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Maximum latitude is invalid")
+  //     .optional(),
+  // query('minLat')
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Minimum latitude is invalid")
+  //     .optional(),
+  // query('minLng')
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Maximum longitude is invalid")
+  //     .optional(),
+  // query('maxLng')
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Minimum longitude is invalid")
+  //     .optional(),
   query('minPrice')
       .isInt({ min: 0 })
       .withMessage("Maximum price must be greater than or equal to 0")
@@ -44,10 +44,10 @@ const validationFilters = [
 
 
 const validateReview = [
-  body('review')
+  check('review')
       .exists()
       .withMessage("Review text is required"),
-  body('stars')
+  check('stars')
       .exists()
       .withMessage("Rating text is required")
       .isInt({ min: 1, max: 5 })
@@ -56,42 +56,41 @@ const validateReview = [
 ]
 
 const validateSpotBody = [
-  body('name')
+  check('name')
       .exists()
       .withMessage('Name is required')
       .trim()
       .isLength({min:1, max:50})
       .withMessage("Name must be less than 50 characters"),
-  body('address')
+  check('address')
       .exists()
       .withMessage("Street address is required")
       .trim(),
-  body('city')
+  check('city')
       .exists()
       .withMessage("City is required")
       .trim(),
-  body('state')
+  check('state')
       .exists()
       .withMessage("State is required")
       .trim(),
-  body('country')
+  check('country')
       .exists()
       .withMessage("Country is required")
       .trim(),
-  body('lat')
-      .exists()
-      .withMessage('Latitute is required')
-      .isFloat({ min: -90, max: 90 })
-      .withMessage("Latitude is not valid"),
-  body('lng')
-      .exists()
-      .isFloat({ min: -180, max: 180 })
-      .withMessage("Longitude is not valid"),
-  body('description')
+  // check('lat')
+  //     .exists()
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Latitude is not valid"),
+  // check('lng')
+  //     .exists()
+  //     .isFloat({ min: -180, max: 180 })
+  //     .withMessage("Longitude is not valid"),
+  check('description')
       .exists()
       .withMessage("Description is required")
       .trim(),
-  body('price')
+  check('price')
       .exists()
       .isInt({ min: 0 })
       .withMessage("Price per day is required"),
@@ -125,18 +124,18 @@ router.get('/',validationFilters, async (req, res, next) => {
     if (size < 1 || size > 20) {
       errors.size = 'Size must be an integer between 1 and 20';
     }
-    if (minLat < -90 || minLat > 90) {
-      errors.minLat = 'Minimum latitude must be between -90 and 90';
-    }
-    if (maxLat < -90 || maxLat > 90) {
-      errors.maxLat = 'Maximum latitude must be between -90 and 90';
-    }
-    if (minLng < -180 || minLng > 180) {
-      errors.minLng = 'Minimum longitude must be between -180 and 180';
-    }
-    if (maxLng < -180 || maxLng > 180) {
-      errors.maxLng = 'Maximum longitude must be between -180 and 180';
-    }
+    // if (minLat < -180 || minLat > 180) {
+    //   errors.minLat = 'Minimum latitude must be between -90 and 90';
+    // }
+    // if (maxLat < -180 || maxLat > 180) {
+    //   errors.maxLat = 'Maximum latitude must be between -90 and 90';
+    // }
+    // if (minLng < -180 || minLng > 180) {
+    //   errors.minLng = 'Minimum longitude must be between -180 and 180';
+    // }
+    // if (maxLng < -180 || maxLng > 180) {
+    //   errors.maxLng = 'Maximum longitude must be between -180 and 180';
+    // }
     if (minPrice < 0) {
       errors.minPrice = 'Minimum price must be a decimal greater than or equal to 0';
     }
@@ -161,8 +160,8 @@ router.get('/',validationFilters, async (req, res, next) => {
           "city",
           "state",
           "country",
-          "lat",
-          "lng",
+          // "lat",
+          // "lng",
           "name",
           "description",
           "price",
@@ -201,8 +200,8 @@ router.get('/current',restoreUser, requireAuth, async (req, res) => {
         'city',
         'state',
         'country',
-        'lat',
-        'lng',
+        // 'lat',
+        // 'lng',
         'name',
         'description',
         'price',
@@ -276,8 +275,8 @@ router.get('/:spotId', async (req, res) => {
           "city",
           "state",
           "country",
-          "lat",
-          "lng",
+          // "lat",
+          // "lng",
           "name",
           "description",
           "price",
@@ -305,6 +304,7 @@ router.get('/:spotId', async (req, res) => {
       group:['Reviews.spotId', 'Spot.id', 'Spotimages.id', 'Owner.id'],
 
   })
+  console.log('@@@@@@@@@@', theSpot)
 
   if (!theSpot) {
     return res.status(404).json({
@@ -313,9 +313,7 @@ router.get('/:spotId', async (req, res) => {
     })
   }
 
-  return res.json({
-      Spots: theSpot
-  })
+  return res.json({ Spots: theSpot });
 })
 
 
@@ -390,7 +388,7 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async (req, res) => {
 // Create a Spot
 router.post('/', restoreUser, requireAuth,validateSpotBody, async (req, res, next) => {
 
-  const { address, city, state, country, lat, lng, name, description, price } = req.body
+  const { address, city, state, country, name, description, price } = req.body
   const ownerId = req.user.id
 
   const newSpot = await Spot.create({
@@ -399,8 +397,7 @@ router.post('/', restoreUser, requireAuth,validateSpotBody, async (req, res, nex
     city,
     state,
     country,
-    lat,
-    lng,
+   
     name,
     description,
     price
